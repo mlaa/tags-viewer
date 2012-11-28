@@ -2,7 +2,11 @@
 
 This application is contained in a single HTML file and has no server dependencies, which makes it easy to host anywhere: just upload a single file (this one!) and you’re done. Or, if you don’t need to share it with anyone, just double-click the file on your hard drive to open it in your Web browser. Configuration is as simple as supplying a Google Spreadsheet URL.
 
-TAGS Viewer is a JavaScript application using [jQuery][3], [Underscore.js][4], [Moment.js][5], [jQuery Hashchange][6], [Bootstrap][7], and [Sheetrock][8].
+### Demo
+[**Try the demo**][3] (bring your own TAGS URL) or take a look at [an ongoing archive of #mla13][4].
+
+### About
+TAGS Viewer is a JavaScript application using [jQuery][5], [Underscore.js][6], [Moment.js][7], [jQuery Hashchange][7], [Bootstrap][9], and [Sheetrock][10].
 
 This work is licensed under a [Creative Commons Attribution-NonCommercial 3.0 Unported License][11].
 
@@ -10,12 +14,12 @@ This work is licensed under a [Creative Commons Attribution-NonCommercial 3.0 Un
 
 [1]: http://mashe.hawksey.info/2012/01/twitter-archive-tagsv3/
 [2]: http://en.wikipedia.org/wiki/Backchannel
-[3]: http://jquery.com
-[4]: http://underscorejs.org
-[5]: http://momentjs.com
-[6]: http://benalman.com/projects/jquery-hashchange-plugin/
-[7]: http://twitter.github.com/bootstrap/
-[8]: https://github.com/chriszarate/Sheetrock
-[9]: https://github.com/mlaa/tags-viewer
-[10]: https://github.com/mlaa/tags-viewer/archive/master.zip
+[3]: http://mlaa.github.com/tags-viewer
+[4]: http://hashtag.mla13.org
+[5]: http://jquery.com
+[6]: http://underscorejs.org
+[7]: http://momentjs.com
+[8]: http://benalman.com/projects/jquery-hashchange-plugin/
+[9]: http://twitter.github.com/bootstrap/
+[10]: https://github.com/chriszarate/Sheetrock
 [11]: http://creativecommons.org/licenses/by-nc/3.0/
