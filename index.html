@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+
+    <meta name="description" content="">
+    <meta name="viewport" content="width=830">
+
+    <script type="text/javascript">
+
+      /* Configuration */
+
+      // Google spreadsheet URL. If this value is false or empty, the page will 
+      // ask the user to supply one. Remember that the spreadsheet must be made 
+      // public or "visible to anyone with the link."
+
+      var spreadsheetURL = '';
+
+      // The hashtag that the spreadsheet is archiving, e.g, '#conference'. This is 
+      // not strictly necessary but is useful for display purposes and to exclude 
+      // it from the Tags ranking.
+
+      var myHashTag = '';
+
+      // That's about it!
+
+    </script>
+
+    <!--[if lt IE 9]>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.6/html5shiv.min.js"></script>
+    <![endif]-->
+
+    <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap.min.css" rel="stylesheet">
+
+    <style type="text/css">
+
+      body {
+        margin: 0;
+        padding: 0;
+      }
+
+      h1, h2, h3, h4, h5, h6 { margin: 0 0 0.75em 0; }
+      a { color: #258; }
+      form { margin: 0; }
+
+      div.container, div.row-fluid { width: 800px !important; }
+
+      div.no-overflow {
+        position: absolute;
+        top: 60px;
+        right: 0;
+        bottom: 15px;
+        left: 0;
+        overflow: hidden;
+      }
+
+      div.row-fluid { margin: 0 auto;}
+      div.scrollable { overflow-y: auto; }
+      div.max-height { height: 100%; }
+
+      div.navbar-search { line-height: inherit; }
+
+
+      /* Calender */
+
+      div.month {
+        float: left;
+        margin-bottom: 15px;
+        padding: 10px;
+        background-color: #eee;
+        -webkit-border-radius: 10px;
+           -moz-border-radius: 10px;
+             -o-border-radius: 10px;
+                border-radius: 10px;
+      }
+
+      div.month h5 { margin-bottom: 5px; }
+      div.month a { color: #333; }
+
+      span.day {
+        display: inline-block;
+        width: 22px;
+        color: #ccc;
+        text-align: center;
+      }
+
+
+      /* Miscellaneous */
+
+      #main, #error, #config, .loading, .sidebar { display: none; }
+      #main .twitter-tweet-rendered { margin-bottom: 2em!important; }
+
+      #intro { font-size: 1.1em; }
+
+      span.badge {
+        padding: 2px 6px;
+        background-color: #789;
+      }
+
+      div.loading {
+        width: 36px;
+        height: 36px;
+        background-image: url('data:image/gif;base64,R0lGODlhIAAgAPMAAPX19QAAAL6%2Bvn9%2Ff6%2Bvr5SUlDQ0NFJSUtDQ0Nvb27W1tRwcHAMDAwAAAAAAAAAAACH%2FC05FVFNDQVBFMi4wAwEAAAAh%2FhpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh%2BQQJCgAAACwAAAAAIAAgAAAE5xDISWlhperN52JLhSSdRgwVo1ICQZRUsiwHpTJT4iowNS8vyW2icCF6k8HMMBkCEDskxTBDAZwuAkkqIfxIQyhBQBFvAQSDITM5VDW6XNE4KagNh6Bgwe60smQUB3d4Rz1ZBApnFASDd0hihh12BkE9kjAJVlycXIg7CQIFA6SlnJ87paqbSKiKoqusnbMdmDC2tXQlkUhziYtyWTxIfy6BE8WJt5YJvpJivxNaGmLHT0VnOgSYf0dZXS7APdpB309RnHOG5gDqXGLDaC457D1zZ%2FV%2FnmOM82XiHRLYKhKP1oZmADdEAAAh%2BQQJCgAAACwAAAAAIAAgAAAE6hDISWlZpOrNp1lGNRSdRpDUolIGw5RUYhhHukqFu8DsrEyqnWThGvAmhVlteBvojpTDDBUEIFwMFBRAmBkSgOrBFZogCASwBDEY%2FCZSg7GSE0gSCjQBMVG023xWBhklAnoEdhQEfyNqMIcKjhRsjEdnezB%2BA4k8gTwJhFuiW4dokXiloUepBAp5qaKpp6%2BHo7aWW54wl7obvEe0kRuoplCGepwSx2jJvqHEmGt6whJpGpfJCHmOoNHKaHx61WiSR92E4lbFoq%2BB6QDtuetcaBPnW6%2BO7wDHpIiK9SaVK5GgV543tzjgGcghAgAh%2BQQJCgAAACwAAAAAIAAgAAAE7hDISSkxpOrN5zFHNWRdhSiVoVLHspRUMoyUakyEe8PTPCATW9A14E0UvuAKMNAZKYUZCiBMuBakSQKG8G2FzUWox2AUtAQFcBKlVQoLgQReZhQlCIJesQXI5B0CBnUMOxMCenoCfTCEWBsJColTMANldx15BGs8B5wlCZ9Po6OJkwmRpnqkqnuSrayqfKmqpLajoiW5HJq7FL1Gr2mMMcKUMIiJgIemy7xZtJsTmsM4xHiKv5KMCXqfyUCJEonXPN2rAOIAmsfB3uPoAK%2B%2BG%2Bw48edZPK%2BM6hLJpQg484enXIdQFSS1u6UhksENEQAAIfkECQoAAAAsAAAAACAAIAAABOcQyEmpGKLqzWcZRVUQnZYg1aBSh2GUVEIQ2aQOE%2BG%2BcD4ntpWkZQj1JIiZIogDFFyHI0UxQwFugMSOFIPJftfVAEoZLBbcLEFhlQiqGp1Vd140AUklUN3eCA51C1EWMzMCezCBBmkxVIVHBWd3HHl9JQOIJSdSnJ0TDKChCwUJjoWMPaGqDKannasMo6WnM562R5YluZRwur0wpgqZE7NKUm%2BFNRPIhjBJxKZteWuIBMN4zRMIVIhffcgojwCF117i4nlLnY5ztRLsnOk%2BaV%2BoJY7V7m76PdkS4trKcdg0Zc0tTcKkRAAAIfkECQoAAAAsAAAAACAAIAAABO4QyEkpKqjqzScpRaVkXZWQEximw1BSCUEIlDohrft6cpKCk5xid5MNJTaAIkekKGQkWyKHkvhKsR7ARmitkAYDYRIbUQRQjWBwJRzChi9CRlBcY1UN4g0%2FVNB0AlcvcAYHRyZPdEQFYV8ccwR5HWxEJ02YmRMLnJ1xCYp0Y5idpQuhopmmC2KgojKasUQDk5BNAwwMOh2RtRq5uQuPZKGIJQIGwAwGf6I0JXMpC8C7kXWDBINFMxS4DKMAWVWAGYsAdNqW5uaRxkSKJOZKaU3tPOBZ4DuK2LATgJhkPJMgTwKCdFjyPHEnKxFCDhEAACH5BAkKAAAALAAAAAAgACAAAATzEMhJaVKp6s2nIkolIJ2WkBShpkVRWqqQrhLSEu9MZJKK9y1ZrqYK9WiClmvoUaF8gIQSNeF1Er4MNFn4SRSDARWroAIETg1iVwuHjYB1kYc1mwruwXKC9gmsJXliGxc%2BXiUCby9ydh1sOSdMkpMTBpaXBzsfhoc5l58Gm5yToAaZhaOUqjkDgCWNHAULCwOLaTmzswadEqggQwgHuQsHIoZCHQMMQgQGubVEcxOPFAcMDAYUA85eWARmfSRQCdcMe0zeP1AAygwLlJtPNAAL19DARdPzBOWSm1brJBi45soRAWQAAkrQIykShQ9wVhHCwCQCACH5BAkKAAAALAAAAAAgACAAAATrEMhJaVKp6s2nIkqFZF2VIBWhUsJaTokqUCoBq%2BE71SRQeyqUToLA7VxF0JDyIQh%2FMVVPMt1ECZlfcjZJ9mIKoaTl1MRIl5o4CUKXOwmyrCInCKqcWtvadL2SYhyASyNDJ0uIiRMDjI0Fd30%2FiI2UA5GSS5UDj2l6NoqgOgN4gksEBgYFf0FDqKgHnyZ9OX8HrgYHdHpcHQULXAS2qKpENRg7eAMLC7kTBaixUYFkKAzWAAnLC7FLVxLWDBLKCwaKTULgEwbLA4hJtOkSBNqITT3xEgfLpBtzE%2FjiuL04RGEBgwWhShRgQExHBAAh%2BQQJCgAAACwAAAAAIAAgAAAE7xDISWlSqerNpyJKhWRdlSAVoVLCWk6JKlAqAavhO9UkUHsqlE6CwO1cRdCQ8iEIfzFVTzLdRAmZX3I2SfZiCqGk5dTESJeaOAlClzsJsqwiJwiqnFrb2nS9kmIcgEsjQydLiIlHehhpejaIjzh9eomSjZR%2BipslWIRLAgMDOR2DOqKogTB9pCUJBagDBXR6XB0EBkIIsaRsGGMMAxoDBgYHTKJiUYEGDAzHC9EACcUGkIgFzgwZ0QsSBcXHiQvOwgDdEwfFs0sDzt4S6BK4xYjkDOzn0unFeBzOBijIm1Dgmg5YFQwsCMjp1oJ8LyIAACH5BAkKAAAALAAAAAAgACAAAATwEMhJaVKp6s2nIkqFZF2VIBWhUsJaTokqUCoBq%2BE71SRQeyqUToLA7VxF0JDyIQh%2FMVVPMt1ECZlfcjZJ9mIKoaTl1MRIl5o4CUKXOwmyrCInCKqcWtvadL2SYhyASyNDJ0uIiUd6GGl6NoiPOH16iZKNlH6KmyWFOggHhEEvAwwMA0N9GBsEC6amhnVcEwavDAazGwIDaH1ipaYLBUTCGgQDA8NdHz0FpqgTBwsLqAbWAAnIA4FWKdMLGdYGEgraigbT0OITBcg5QwPT4xLrROZL6AuQAPUS7bxLpoWidY0JtxLHKhwwMJBTHgPKdEQAACH5BAkKAAAALAAAAAAgACAAAATrEMhJaVKp6s2nIkqFZF2VIBWhUsJaTokqUCoBq%2BE71SRQeyqUToLA7VxF0JDyIQh%2FMVVPMt1ECZlfcjZJ9mIKoaTl1MRIl5o4CUKXOwmyrCInCKqcWtvadL2SYhyASyNDJ0uIiUd6GAULDJCRiXo1CpGXDJOUjY%2BYip9DhToJA4RBLwMLCwVDfRgbBAaqqoZ1XBMHswsHtxtFaH1iqaoGNgAIxRpbFAgfPQSqpbgGBqUD1wBXeCYp1AYZ19JJOYgH1KwA4UBvQwXUBxPqVD9L3sbp2BNk2xvvFPJd%2BMFCN6HAAIKgNggY0KtEBAAh%2BQQJCgAAACwAAAAAIAAgAAAE6BDISWlSqerNpyJKhWRdlSAVoVLCWk6JKlAqAavhO9UkUHsqlE6CwO1cRdCQ8iEIfzFVTzLdRAmZX3I2SfYIDMaAFdTESJeaEDAIMxYFqrOUaNW4E4ObYcCXaiBVEgULe0NJaxxtYksjh2NLkZISgDgJhHthkpU4mW6blRiYmZOlh4JWkDqILwUGBnE6TYEbCgevr0N1gH4At7gHiRpFaLNrrq8HNgAJA70AWxQIH1%2BvsYMDAzZQPC9VCNkDWUhGkuE5PxJNwiUK4UfLzOlD4WvzAHaoG9nxPi5d%2BjYUqfAhhykOFwJWiAAAIfkECQoAAAAsAAAAACAAIAAABPAQyElpUqnqzaciSoVkXVUMFaFSwlpOCcMYlErAavhOMnNLNo8KsZsMZItJEIDIFSkLGQoQTNhIsFehRww2CQLKF0tYGKYSg%2BygsZIuNqJksKgbfgIGepNo2cIUB3V1B3IvNiBYNQaDSTtfhhx0CwVPI0UJe0%2Bbm4g5VgcGoqOcnjmjqDSdnhgEoamcsZuXO1aWQy8KAwOAuTYYGwi7w5h%2BKr0SJ8MFihpNbx%2B4Erq7BYBuzsdiH1jCAzoSfl0rVirNbRXlBBlLX%2BBP0XJLAPGzTkAuAOqb0WT5AH7OcdCm5B8TgRwSRKIHQtaLCwg1RAAAOwAAAAAAAAAAAA%3D%3D');
+        background-repeat: no-repeat;
+      }
+
+      #people p { clear: left; }
+      #people img {
+        float: left;
+        margin: 0 5px 10px 0;
+      }
+
+    </style>
+
+    <title>TAGS Viewer</title>
+
+  </head>
+
+  <body>
+
+    <header>
+
+      <div class="navbar navbar-fixed-top">
+        <div class="navbar-inner">
+          <div class="container">
+            <a class="brand" href="#"><strong>TAGS Viewer</strong></a>
+            <ul class="nav" id="tabs">
+              <li><a href="#/dates">Dates</a></li>
+              <li><a href="#/people">People</a></li>
+              <li><a href="#/mentions">Mentions</a></li>
+              <li><a href="#/tags">Tags</a></li>
+              <li><a href="#/links">Links</a></li>
+              <li><a href="#/media">Media</a></li>
+            </ul>
+            <form class="navbar-search pull-right">
+              <input type="text" id="searchBox" class="search-query span2" placeholder="Search">
+            </form>
+          </div>
+        </div>
+      </div>
+
+    </header>
+
+
+    <div class="container no-overflow">
+
+      <div class="row-fluid max-height">
+
+        <div class="span8 max-height scrollable" id="view">
+
+          <noscript>
+            <div class="alert alert-error">
+              <p><strong>This site requires JavaScript.</strong></p>
+            </div>
+          </noscript>
+
+          <div id="main" class="view">
+            <h3 id="summary"></h3>
+            <script type="text/underscore-template" id="tweet-template">
+              <blockquote class="twitter-tweet"><p><%= cells.text %></p>&mdash; @<%= cells.from_user %> <a href="https://twitter.com/<%= cells.from_user %>/status/<%= cells.id_str %>" data-datetime="<%= cells.time %>"><%= cells.created_at %></a></blockquote>
+            </script>
+          </div>
+
+          <div id="intro" class="view">
+
+            <div id="config">
+              <div class="alert alert-block">
+                <form class="form-inline">
+                  <fieldset>
+                    <p><strong>No data source.</strong> TAGS Viewer requires a <a href="http://mashe.hawksey.info/2012/01/twitter-archive-tagsv3/">TAGS</a> Google Spreadsheet URL as a data source. Please supply one below. Make sure to copy the URL for the “Archive” sheet (including the <code>gid</code> number).</p>
+                    <input id="key" type="text" placeholder="TAGS Google Spreadsheet URL">
+                    <button id="keyButton" type="button" class="btn">Submit</button>
+                  </fieldset>
+                </form>
+              </div>
+            </div>
+
+            <h3>Introduction</h3>
+
+            <p><strong>TAGS Viewer</strong> allows users to browse, explore, and search a <em>Twitter</em> archive. As a backend, it requires Martin Hawksey’s <a href="http://mashe.hawksey.info/2012/01/twitter-archive-tagsv3/">Twitter Archive Google Spreadsheet (TAGS)</a>. TAGS provides a free, non-technical method of archiving tweets for a given hashtag, which can be particularly useful for capturing a conference’s <a href="http://en.wikipedia.org/wiki/Backchannel">backchannel</a>.</p>
+
+            <p>This application is contained in a single HTML file and has no server dependencies, which makes it easy to host anywhere: just upload a single file (this one!) and you’re done. Or, if you don’t need to share it with anyone, just double-click the file on your hard drive to open it in your Web browser. Configuration is as simple as supplying a Google Spreadsheet URL.</p>
+
+            <p>Read more about this project at <a href="https://github.com/mlaa/tags-viewer">Github</a> or download <a href="https://github.com/mlaa/tags-viewer/archive/master.zip">a zip file of the latest version</a>. This work is licensed under a <a href="http://creativecommons.org/licenses/by-nc/3.0/">Creative Commons Attribution-NonCommercial 3.0 Unported License</a>.</p>
+
+            <p><img src="http://i.creativecommons.org/l/by-nc/3.0/88x31.png" width="88" height="31" alt="Creative Commons License"></p>
+
+          </div>
+
+          <div id="error" class="view">
+            <div class="alert alert-error">
+              <p><strong>Error:</strong> Sorry, we could not process your request.</p>
+            </div>
+          </div>
+
+          <div id="view-loading" class="loading"></div>
+
+        </div>
+
+        <div class="span4 well max-height scrollable" id="sidebar">
+
+          <div id="home" class="sidebar">
+            <h4>Overview</h4>
+            <script type="text/underscore-template" id="home-template">
+              <p>There are <strong><%= parseInt(cells.count) - 1 %> tweets</strong> in this archive.</p>
+              <p>This first tweet was <strong><%= moment(cells.first).fromNow() %></strong>. The most recent tweet was <strong><%= moment(cells.last).fromNow() %></strong>.</p>
+            </script>
+          </div>
+
+          <div id="dates" class="sidebar">
+            <h4>Dates</h4>
+            <script type="text/underscore-template" id="month-template">
+              <div class="month">
+                <h5><%= month %> <%= year %></h5>
+              </div>
+            </script>
+            <script type="text/underscore-template" id="day-template">
+              <span class="day">
+                <% if(date) { %>
+                  <a href="#/dates/<%= date %>"><%= day %></a>
+                <% } else { %>
+                  <%= day %>
+                <% } %>
+              </span>
+              <% if(week) { %><br><% } %>
+            </script>
+          </div>
+
+          <div id="people" class="sidebar">
+            <h4>People</h4>
+            <script type="text/underscore-template" id="person-template">
+              <p><img src="<%= cells.profile_image_url %>" height="48" width="48" alt="<%= cells.user %>" class="img-rounded"> <a href="#/people/<%= cells.user %>"><%= cells.user %></a><br><span class="badge badge-info"><%= cells.count %></span></p>
+            </script>
+          </div>
+
+          <div id="mentions" class="sidebar">
+            <h4>Mentions</h4>
+            <script type="text/underscore-template" id="mention-template">
+              <p><a href="#/mentions/<%= name %>"><%= name %></a> <span class="badge badge-info"><%= count %></span></p>
+            </script>
+          </div>
+
+          <div id="tags" class="sidebar">
+            <h4>Tags</h4>
+            <script type="text/underscore-template" id="tag-template">
+              <p><a href="#/tags/<%= name %>"><%= name %></a> <span class="badge badge-info"><%= count %></span></p>
+            </script>
+          </div>
+
+          <div id="links" class="sidebar">
+            <h4>Links</h4>
+            <script type="text/underscore-template" id="link-template">
+              <p><a href="#/links/<%= name %>"><%= name %></a> <span class="badge badge-info"><%= count %></span></p>
+            </script>
+          </div>
+
+          <div id="media" class="sidebar">
+            <h4>Media</h4>
+            <script type="text/underscore-template" id="media-template">
+              <p><a href="#/media/<%= name %>"><%= name %></a> <span class="badge badge-info"><%= count %></span></p>
+            </script>
+          </div>
+
+          <div id="search" class="sidebar"></div>
+
+          <div id="sidebar-loading" class="loading"></div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.3.3/underscore-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-hashchange/v1.3/jquery.ba-hashchange.min.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+    <script src="https://mlaa.github.com/tags-viewer/jquery.sheetrock.min.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+
+    <script type="text/javascript">
+
+
+      /* Application configuration */
+
+      config = {
+
+        spreadsheet: {
+
+          // Default column labels
+          labels: ['id_str', 'from_user', 'text', 'created_at', 'time'],
+
+          // Default chunk size (number of rows to load at a time)
+          chunkSize : 20,
+
+          // Default number of header rows
+          headers : 1
+
+        },
+      
+        // Our hash tag
+        myHashTag: (typeof myHashTag === 'undefined') ? '' : myHashTag.toLowerCase().replace(/^#/, ''),
+
+        // Debug mode.
+        debug: true,
+
+        // Use Twitter embed -- see comments in "Twitter embed", below.
+        twitterEmbed : true,
+
+        // Define spreadsheet views for valid (non-error) requests. The 
+        // query language is SQL-like. Google provides ocumentation here:
+        // https://developers.google.com/chart/interactive/docs/querylanguage
+
+        views : {
+          home     : { },  // No dynamic content
+          dates    : { sql: "select %id_str%,%from_user%,%text%,%created_at%,%time% where not %text% starts with 'RT' and toDate(%time%) = date '%%%'" },
+          people   : { sql: "select %id_str%,%from_user%,%text%,%created_at%,%time% where lower(%from_user%) = '%%%'" },
+          mentions : { sql: "select %id_str%,%from_user%,%text%,%created_at%,%time% where lower(%text%) contains '@%%%'" },
+          tags     : { sql: "select %id_str%,%from_user%,%text%,%created_at%,%time% where lower(%text%) contains '#%%%'" },
+          links    : { sql: "select %id_str%,%from_user%,%text%,%created_at%,%time% where lower(%entities_str%) contains '%%%'" },
+          media    : { sql: "select %id_str%,%from_user%,%text%,%created_at%,%time% where lower(%entities_str%) contains '%%%'" },
+          search   : { sql: "select %id_str%,%from_user%,%text%,%created_at%,%time% where not %text% starts with 'RT' and lower(%text%) contains '%%%'" }
+        },
+
+        sidebars: {
+          home     : { sql: "select count(%id_str%),min(%time%),max(%time%)", labels: ['count','first','last'] },
+          dates    : { sql: "select %time%,count(%id_str%) where not %text% starts with 'RT' and year(%time%) is not null group by %time%", labels: ['date', 'count'] },
+          people   : { sql: "select %from_user%,count(%id_str%),max(%profile_image_url%) group by %from_user% order by count(%id_str%) desc", labels: ['user', 'count', 'profile_image_url'] },
+          mentions : { sql: "select %entities_str%" },
+          tags     : { sql: "select %entities_str%" },
+          links    : { sql: "select %entities_str%" },
+          media    : { sql: "select %entities_str%" },
+          search   : { }  // No dynamic content
+        },
+
+        // Define sidebars with entity information (they are loaded together).
+        entities : ['mentions','tags','links','media'],
+
+        summaries: {
+          dates    : '%%%',
+          people   : '@%%%',
+          mentions : 'Mentions: @%%%',
+          tags     : '#%%%',
+          links    : 'Links: %%%',
+          media    : 'Media: %%%',
+          search   : 'Search results for <span class="label label-info">%%%</label>'
+        },
+
+        // Define a jQuery selector for the top-level content children 
+        // so we can remove them when loading a new view.
+        templateChildren : 'div, blockquote',
+
+        // Certain domains are whitelisted as media object providers.
+        mediaDomains : ['youtube.com','youtu.be','vimeo.com','twitpic.com','yfrog.com','docs.google.com'],
+
+        // Certain file extensions are whitelisted as media objects.
+        mediaExtensions : ['jpg','jpeg','gif','png','mov','avi']
+
+      };
+
+
+
+      /* Cache */
+
+
+      cache = {
+
+        // Cache Underscore templates and callback functions.
+        templates: {
+          home     : _.template($('#home-template').html()),
+          tweets   : _.template($('#tweet-template').html()),
+          dates    : loadDates,
+          months   : _.template($('#month-template').html()),
+          days     : _.template($('#day-template').html()),
+          people   : _.template($('#person-template').html()),
+          mentions : _.template($('#mention-template').html()),
+          tags     : _.template($('#tag-template').html()),
+          links    : _.template($('#link-template').html()),
+          media    : _.template($('#media-template').html())
+        },
+
+        // Cache jQuery selectors.
+        elements: {
+          tabs      : $('#tabs li'),
+          view      : $('#view'),
+          views     : $('#view .view'),
+          sidebar   : $('#sidebar'),
+          sidebars  : $('#sidebar .sidebar'),
+          main      : $('#main'),
+          config    : $('#config'),
+          intro     : $('#intro'),
+          error     : $('#error'),
+          summary   : $('#summary'),
+          home      : $('#home'),
+          dates     : $('#dates'),
+          people    : $('#people'),
+          mentions  : $('#mentions'),
+          tags      : $('#tags'),
+          links     : $('#links'),
+          media     : $('#media'),
+          search    : $('#search'),
+          searchBox : $('#searchBox'),
+          calendar  : $('#calendar'),
+          key       : $('#key'),
+          keyButton : $('#keyButton'),
+          loading_v : $('#view-loading'),
+          loading_s : $('#sidebar-loading')
+        },
+
+        // Create a placeholder for an entities cache.
+        entities: {links: {}, media: {}, tags: {}, mentions: {}},
+
+        // Create a placeholder for a dates cache.
+        dates: {}
+
+      };
+
+
+
+      /* State information */
+
+
+      state = {
+        previous: { sidebar: '' },
+        entitiesLoaded: false
+      };
+
+
+
+      /* Twitter embed */
+
+      // Twitter asks that you use their embed solution when 
+      // displaying tweets on your site. While it makes them 
+      // nice to look at and does nice things like pulling in 
+      // whole conversations, it can slow down a page. Also 
+      // note that it doesn't seem to work on localhost.
+
+
+      if(config.twitterEmbed) $.getScript('https://platform.twitter.com/widgets.js');
+
+
+
+      /* Application */
+
+
+      $(document).ready(function() {
+
+        // If a spreadsheet URL has been supplied, throw the 
+        // lever! Otherwise, allow a user to specify one.
+        if(spreadsheetURL) {
+          setup();
+        } else {
+          cache.elements.config.show();
+          cache.elements.key.bind('keydown', addSheetListener);
+          cache.elements.keyButton.bind('click', addSheet);
+        }
+
+      });
+
+
+
+      /* Setup */
+
+
+      function setup() {
+
+        // Add Google Spreadsheet URL.
+        config.spreadsheet.url = spreadsheetURL;
+
+        // Configure Sheetrock.
+        $.each(config.spreadsheet, function(key, val) {
+          $.fn.sheetrock.options[key] = val;
+        });
+
+        // Start hashchange router.
+        $(window).hashchange(hashRouter).trigger('hashchange');
+
+        // Listen for tab clicks.
+        cache.elements.tabs.bind('click', tabClick);
+
+        // Listen for searches.
+        cache.elements.searchBox.bind('keydown', searchWhack);
+
+        // Add user-supplied hash tag to page header.
+        $('#title').html(myHashTag);
+
+      }
+
+
+
+      /* Hashchange router */
+
+
+      function hashRouter(e) {
+
+        // Identify requested resource.
+        var hash = window.location.hash.replace(/^[#\/]*/, '');
+        var request = hash.split('/', 2);
+
+        // Populate state information.        
+        state.sidebar = (request[0]) ? request[0] : 'home';
+        state.view    = (request[1]) ? request[1] : false;
+
+        // Validate request.
+        if(!_.has(config.sidebars, state.sidebar)) {
+          cache.elements.views.hide();
+          cache.elements.error.show();
+          return false;
+        }
+
+        // If sidebar has changed, load new sidebar.
+        if(state.previous.sidebar !== state.sidebar) {
+
+          // Hide all sidebars and show requested sidebar.
+          cache.elements.sidebars.hide();
+          cache.elements[state.sidebar].show();
+
+          // Store new sidebar in state variable.
+          state.previous.sidebar = state.sidebar;
+
+          // Load any dynamic sidebar content.
+          if(_.has(config.sidebars[state.sidebar], 'sql')) {
+            if($.inArray(state.sidebar, config.entities) >= 0) {
+              if(!state.entitiesLoaded) loadEntities();
+            } else {
+              loadSidebar();
+            }
+          }
+
+          // Scroll to the top of the sidebar.
+          cache.elements.sidebar.scrollTop(0);
+
+        }
+
+        // If content is requested, load content.
+        if(state.view) {
+
+          // Hide current view.
+          cache.elements.views.hide();
+
+          // Clear previously loaded content.
+          cache.elements.main.children(config.templateChildren).remove();
+          $.data(cache.elements.main[0], 'sheetrock-loaded',     0);
+          $.data(cache.elements.main[0], 'sheetrock-row-offset', 0);
+
+          // Load content and start infinite scroll listener, if needed.
+          if(_.has(config.views[state.sidebar], 'sql')) {
+            cache.elements.view.scroll(scrollTroll);
+            loadContent();
+          }
+
+          // Update content summary.
+          cache.elements.summary.html(config.summaries[state.sidebar].replace(/%%%/g, state.view));
+
+          // Show content and scroll to the top of the main window.
+          cache.elements.main.show();
+          cache.elements.main.scrollTop(0);
+
+        }
+
+        // The home page gets special treatment.
+        if(state.sidebar == 'home') {
+          cache.elements.views.hide();
+          cache.elements.intro.show();
+        }
+
+      }
+
+
+
+      /* Bindings */
+
+
+      function addSheetListener(e) {
+        if(e.which == 13) addSheet(e);
+      }
+
+
+      function addSheet(e) {
+
+        var key = trim(cache.elements.key.val());
+
+        if(key) {
+          cache.elements.config.hide();
+          spreadsheetURL = key;
+          setup();
+          e.preventDefault();
+        }
+
+      }
+
+
+      function searchWhack(e) {
+
+        var searchText = trim($(this).val());
+
+        if(e.which == 13 && searchText) {
+          $(this).blur();
+          window.location.hash = '#/search/' + encodeURIComponent(searchText);
+          e.preventDefault();
+        }
+
+      }
+
+
+      function tabClick(e) {
+        cache.elements.tabs.removeClass('active');
+        $(this).addClass('active');
+      }
+
+
+
+      /* Loading */
+
+
+      function loadSidebar() {
+
+        // Build SQL query.
+        var query = $.extend({}, config.sidebars[state.sidebar]);
+        query.rowHandler = cache.templates[state.sidebar];
+        query.chunkSize = 0;
+
+        // Debug.
+        if(config.debug) console.log(query.sql);
+
+        // Build calendar for `dates` request.
+        if(state.sidebar == 'dates') query.userCallback = loadCalendar;
+
+        // Pass along loading indicator.
+        query.loading = cache.elements.loading_s;
+
+        // Fetch data.
+        cache.elements[state.sidebar].sheetrock(query);
+
+      }
+
+
+      function loadContent() {
+
+        // Build SQL query.
+        var query = $.extend({}, config.views[state.sidebar]);
+        query.sql = query.sql.replace(/%%%/, state.view.toLowerCase());
+        query.rowHandler = cache.templates.tweets;
+
+        // Debug.
+        if(config.debug) console.log(query.sql);
+
+        // Schedule Twitter embed agent, if enabled.
+        if(config.twitterEmbed) query.userCallback = formatTweets;
+
+        // Pass along loading indicator.
+        query.loading = cache.elements.loading_v;
+
+        // Fetch data.
+        cache.elements.main.sheetrock(query);
+
+      }
+
+
+
+      function loadEntities() {
+
+        // Build SQL query.
+        var query = $.extend({}, config.sidebars[state.sidebar]);
+        query.chunkSize = 0;
+
+        // Debug.
+        if(config.debug) console.log(query.sql);
+
+        // Set callback functions.
+        query.dataHandler = parseEntities;
+
+        // Pass along loading indicator.
+        query.loading = cache.elements.loading_s;
+
+        // Fetch data.
+        $.fn.sheetrock(query);
+
+      }
+
+
+
+      /* Date callbacks */
+
+
+      function loadDates(row) {
+        if(!_.has(cache.dates, 'start')) cache.dates.start = moment(row.cells.date).format('YYYY-MM-DD');
+        cache.dates[moment(row.cells.date).format('YYYY-MM-DD')] = row.cells.count;
+      }
+
+
+      function loadCalendar(options) {
+
+        if(cache.dates.start) {
+
+          var start = { date: moment(cache.dates.start, 'YYYY-MM-DD') };
+          var today = { date: moment() };
+
+          start.year  = parseInt(start.date.format('YYYY'));
+          today.year  = parseInt(today.date.format('YYYY'));
+          start.month = parseInt(start.date.format('M'));
+          today.month = parseInt(today.date.format('M'));
+
+          for(y=start.year; y<=today.year; y++) {
+
+            var minMonth = (y > start.year) ? 1  : start.month;
+            var maxMonth = (y < today.year) ? 12 : today.month;
+
+            for(m=minMonth; m<=maxMonth; m++) {
+
+              var first = moment(y + '-' + m, 'YYYY-MM');
+              var month = $(cache.templates.months({month: first.format('MMMM'), year: y})).appendTo(cache.elements.dates);
+              var dow = parseInt(first.format('d'));
+
+              for(d=0; d<dow; d++) month.append(cache.templates.days({date: '', day: '&#160;', week: false}));
+
+              for(d=1; d<=first.daysInMonth(); d++) {
+                var date = y + '-' + strpad(m, 2) + '-' + strpad(d, 2);
+                var week = !((d + dow) % 7);
+                if(!_.has(cache.dates, date)) date = '';
+                month.append(cache.templates.days({date: date, day: d, week: week}));
+              }
+            }
+          }
+
+        }
+
+      }
+
+
+
+      /* Data callbacks */
+
+
+      function parseEntities(data) {
+
+        // Extract entities and populate cache.
+        _.each(data.table.rows, function(obj, i) {
+          if(_.has(obj, 'c')) {
+            var entities = (_.has(obj.c[0], 'v')) ? $.parseJSON(obj.c[0].v) : {};
+            if(entities) cacheEntities(entities);
+          }
+        });
+
+        // Sort entities by count (descending order).
+        _.each(cache.entities, function(entities, i) {
+          cache.entities[i] = _.sortBy(entities, function(entity, j) { return -entity.count; });
+        });
+
+        // Change state of loaded entities.
+        state.entitiesLoaded = true;
+
+        // Show entities.
+        showEntities();
+
+      }
+
+
+      function cacheEntities(entityGroup) {
+
+        // Take a look at the entities (last) column in the Archive sheet.
+        // I won't attempt to document it here.
+
+        // Iterate over the entities and push them into the cache.
+
+        $.each(entityGroup, function(i, entities) {
+
+          $.each(entities, function(j, entity) {
+
+            switch (i) {
+
+              case 'urls':
+              case 'media':
+
+                var parsedUri = parseUri(entity.expanded_url.toLowerCase());
+                var domain = parsedUri.host.replace(/^www\d?\./, '');
+
+                // Separate "media" objects (pictures, videos, documents) in a separate cache.
+                var cacheName = (i == 'media' || isMediaURL(domain, parsedUri.file)) ? 'media' : 'links';
+
+                if(_.has(cache.entities[cacheName], domain)) {
+                  // If we've seen the domain before, push it onto the stack and increment the counter.
+                  cache.entities[cacheName][domain].count++;
+                  cache.entities[cacheName][domain].urls.push(entity.expanded_url);
+                } else {
+                  // Start a list of URLs from this domain.
+                  cache.entities[cacheName][domain] = { count: 1, name: domain, urls: [entity.expanded_url] };
+                }
+
+                break;
+
+              case 'hashtags':
+
+                var tagName = entity.text.toLowerCase();
+
+                // Exclude the hashtag we are all here to see.
+                if(tagName !== config.myHashTag) {
+
+                  if(_.has(cache.entities.tags, tagName)) {
+                    // If we've seen the tag before, increment the counter.
+                    cache.entities.tags[tagName].count++;
+                  } else {
+                    // Preserve case of the first instance we encounter.
+                    cache.entities.tags[tagName] = { count: 1, name: entity.text };
+                  }
+
+                }
+
+                break;
+
+              case 'user_mentions':
+
+                var screenName = entity.screen_name.toLowerCase();
+
+                if(_.has(cache.entities.mentions, screenName)) {
+                  // If we've seen the screen name before, increment the counter.
+                  cache.entities.mentions[screenName].count++;
+                } else {
+                  // Add information about the mention to the database.
+                  cache.entities.mentions[screenName] = { count: 1, name: screenName, id: entity.id, realName: entity.name };
+                }
+
+                break;
+
+            }
+
+          });
+
+        });
+
+        return null;
+
+      }
+
+
+
+      /* Rendering */
+
+
+      function showEntities() {
+
+        $.each(config.entities, function(i, sidebar) {
+          $.each(cache.entities[sidebar], function(j, entity) {
+            cache.elements[sidebar].append(cache.templates[sidebar](entity));
+          });
+        });
+
+      }
+
+
+      function formatTweets() {
+        if(typeof twttr !== 'undefined') twttr.widgets.load();
+      }
+
+
+
+      /* Miscellaneous wheel reinventing */
+
+
+      // Homemade vanilla infinite scroll
+
+      function scrollTroll() {
+
+        // Don't load more data if we are already actively getting some.
+        if(!$.fn.sheetrock.working) {
+
+          // Trigger callback when user scrolls past this number of pixels 
+          // from the bottom of the page.
+          var pixelBuffer = 100;
+
+          // Short reference to main window.
+          var el = cache.elements.view;
+
+          // Determine if there is still more data to get.
+          var loaded = parseInt($.data(el[0], 'sheetrock-loaded')) || false;
+
+          // If there is no more content, unbind the scroll event.
+          if(loaded) {
+            el.unbind('scroll');
+          // Otherwise, load more content.
+          } else {
+            if(el[0].scrollHeight - el.scrollTop() - el.height() < pixelBuffer) loadContent();
+          }
+
+        }
+
+      }
+
+
+      // Compare URL against whitelist of media Web sites and file types.
+
+      function isMediaURL(domain, file) {
+
+        if($.inArray(domain, config.mediaDomains) >= 0) return true;
+        if($.inArray(file.split('.', 2)[1], config.mediaExtensions) >= 0) return true;
+
+        return false;
+
+      }
+
+
+      // Zero-pad numbers.
+
+      function strpad(str, len) {
+        while((str + '').length < len) str = '0' + str;
+        return str;
+      }
+
+
+      // Trim string.
+
+      function trim(str) {
+        return str.toString().replace(/^ +/, '').replace(/ +$/, '');
+      }
+
+
+      // parseUri 1.2.2
+      // (c) Steven Levithan <stevenlevithan.com>
+      // MIT License
+
+      function parseUri (str) {
+        var o = parseUri.options,
+          m   = o.parser[o.strictMode ? "strict" : "loose"].exec(str),
+          uri = {},
+          i   = 14;
+
+        while (i--) uri[o.key[i]] = m[i] || "";
+
+        uri[o.q.name] = {};
+        uri[o.key[12]].replace(o.q.parser, function ($0, $1, $2) {
+          if ($1) uri[o.q.name][$1] = $2;
+        });
+
+        return uri;
+      };
+
+      parseUri.options = {
+        strictMode: false,
+        key: ["source","protocol","authority","userInfo","user","password","host","port","relative","path","directory","file","query","anchor"],
+        q:   {
+          name:   "queryKey",
+          parser: /(?:^|&)([^&=]*)=?([^&]*)/g
+        },
+        parser: {
+          strict: /^(?:([^:\/?#]+):)?(?:\/\/((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\/?#]*)(?::(\d*))?))?((((?:[^?#\/]*\/)*)([^?#]*))(?:\?([^#]*))?(?:#(.*))?)/,
+          loose:  /^(?:(?![^:@]+:[^:@\/]*@)([^:\/?#.]+):)?(?:\/\/)?((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\/?#]*)(?::(\d*))?)(((\/(?:[^?#](?![^?#\/]*\.[^?#\/.]+(?:[?#]|$)))*\/?)?([^?#\/]*))(?:\?([^#]*))?(?:#(.*))?)/
+        }
+      };
+
+    </script>
+
+  </body>
+
+</html>
