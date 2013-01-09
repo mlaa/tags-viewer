@@ -172,7 +172,7 @@
               <div class="alert alert-block">
                 <form class="form-inline">
                   <fieldset>
-                    <p><strong>No data source.</strong> TAGS Viewer requires a <a href="http://mashe.hawksey.info/2012/01/twitter-archive-tagsv3/">TAGS</a> Google Spreadsheet URL as a data source. Please supply one below. Make sure to copy the URL for the “Archive” sheet (including the <code>gid</code> number).</p>
+                    <p><strong>No data source.</strong> TAGS Viewer requires a <a href="http://mashe.hawksey.info/2012/01/twitter-archive-tagsv3/">TAGS</a> Google Spreadsheet URL as a data source. Please supply one below.</p>
                     <input id="key" type="text" placeholder="TAGS Google Spreadsheet URL">
                     <button id="keyButton" type="button" class="btn">Submit</button>
                   </fieldset>
@@ -566,10 +566,15 @@
         var key = trim(cache.elements.key.val());
 
         if(key) {
+
+          // Attempt to grab correct work sheet.
+          if(!/#gid=[0-9]+$/.test(key)) key += '#gid=82';
+
           cache.elements.config.hide();
           spreadsheetURL = key;
           setup();
           e.preventDefault();
+
         }
 
       }
