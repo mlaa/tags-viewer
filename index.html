@@ -164,9 +164,6 @@
 
           <div id="main" class="view">
             <h3 id="summary"></h3>
-            <script type="text/underscore-template" id="tweet-template">
-              <blockquote class="twitter-tweet"><p><%= cells.text %></p>&mdash; @<%= cells.from_user %> <a href="https://twitter.com/<%= cells.from_user %>/status/<%= cells.id_str %>" data-datetime="<%= cells.time %>"><%= cells.created_at %></a></blockquote>
-            </script>
           </div>
 
           <div id="intro" class="view">
@@ -209,64 +206,30 @@
 
           <div id="home" class="sidebar">
             <h4>Overview</h4>
-            <script type="text/underscore-template" id="home-template">
-              <p>There are <strong><%= parseInt(cells.count) - 1 %> tweets</strong> in this archive.</p>
-              <p>This first tweet was <strong><%= moment(cells.first).fromNow() %></strong>. The most recent tweet was <strong><%= moment(cells.last).fromNow() %></strong>.</p>
-            </script>
           </div>
 
           <div id="dates" class="sidebar">
             <h4>Dates</h4>
-            <script type="text/underscore-template" id="month-template">
-              <div class="month">
-                <h5><%= month %> <%= year %></h5>
-              </div>
-            </script>
-            <script type="text/underscore-template" id="day-template">
-              <span class="day">
-                <% if(date) { %>
-                  <a href="#/dates/<%= date %>"><%= day %></a>
-                <% } else { %>
-                  <%= day %>
-                <% } %>
-              </span>
-              <% if(week) { %><br><% } %>
-            </script>
           </div>
 
           <div id="people" class="sidebar">
             <h4>People</h4>
-            <script type="text/underscore-template" id="person-template">
-              <p><img src="<%= cells.profile_image_url %>" height="48" width="48" alt="<%= cells.user %>" class="img-rounded"> <a href="#/people/<%= cells.user %>"><%= cells.user %></a><br><span class="badge badge-info"><%= cells.count %></span></p>
-            </script>
           </div>
 
           <div id="mentions" class="sidebar">
             <h4>Mentions</h4>
-            <script type="text/underscore-template" id="mention-template">
-              <p><a href="#/mentions/<%= name %>"><%= name %></a> <span class="badge badge-info"><%= count %></span></p>
-            </script>
           </div>
 
           <div id="tags" class="sidebar">
             <h4>Tags</h4>
-            <script type="text/underscore-template" id="tag-template">
-              <p><a href="#/tags/<%= name %>"><%= name %></a> <span class="badge badge-info"><%= count %></span></p>
-            </script>
           </div>
 
           <div id="links" class="sidebar">
             <h4>Links</h4>
-            <script type="text/underscore-template" id="link-template">
-              <p><a href="#/links/<%= name %>"><%= name %></a> <span class="badge badge-info"><%= count %></span></p>
-            </script>
           </div>
 
           <div id="media" class="sidebar">
             <h4>Media</h4>
-            <script type="text/underscore-template" id="media-template">
-              <p><a href="#/media/<%= name %>"><%= name %></a> <span class="badge badge-info"><%= count %></span></p>
-            </script>
           </div>
 
           <div id="search" class="sidebar"></div>
@@ -381,18 +344,19 @@
 
       cache = {
 
-        // Cache Underscore templates and callback functions.
+        // Cache templates and callback functions. Strings are WAY
+        // faster than DOM-based <script> templates. Why is that?
         templates: {
-          home     : _.template($('#home-template').html()),
-          tweets   : _.template($('#tweet-template').html()),
+          home     : _.template('<p>There are <strong><%= parseInt(cells.count) - 1 %> tweets</strong> in this archive.</p><p>This first tweet was <strong><%= moment(cells.first).fromNow() %></strong>. The most recent tweet was <strong><%= moment(cells.last).fromNow() %></strong>.</p>'),
+          tweets   : _.template('<blockquote class="twitter-tweet"><p><%= cells.text %></p>&mdash; @<%= cells.from_user %> <a href="https://twitter.com/<%= cells.from_user %>/status/<%= cells.id_str %>" data-datetime="<%= cells.time %>"><%= cells.created_at %></a></blockquote>'),
           dates    : loadDates,
-          months   : _.template($('#month-template').html()),
-          days     : _.template($('#day-template').html()),
-          people   : _.template($('#person-template').html()),
-          mentions : _.template($('#mention-template').html()),
-          tags     : _.template($('#tag-template').html()),
-          links    : _.template($('#link-template').html()),
-          media    : _.template($('#media-template').html())
+          months   : _.template('<div class="month"><h5><%= month %> <%= year %></h5></div>'),
+          days     : _.template('<span class="day"><% if(date) { %><a href="#/dates/<%= date %>"><%= day %></a><% } else { %><%= day %><% } %></span><% if(week) { %><br><% } %>'),
+          people   : _.template('<p><img src="<%= cells.profile_image_url %>" height="48" width="48" alt="<%= cells.user %>" class="img-rounded"> <a href="#/people/<%= cells.user %>"><%= cells.user %></a><br><span class="badge badge-info"><%= cells.count %></span></p>'),
+          mentions : _.template('<p><a href="#/mentions/<%= name %>"><%= name %></a> <span class="badge badge-info"><%= count %></span></p>'),
+          tags     : _.template('<p><a href="#/tags/<%= name %>"><%= name %></a> <span class="badge badge-info"><%= count %></span></p>'),
+          links    : _.template('<p><a href="#/links/<%= name %>"><%= name %></a> <span class="badge badge-info"><%= count %></span></p>'),
+          media    : _.template('<p><a href="#/media/<%= name %>"><%= name %></a> <span class="badge badge-info"><%= count %></span></p>')
         },
 
         // Cache jQuery selectors.
@@ -519,8 +483,8 @@
         var request = hash.split('/', 2);
 
         // Populate state information.        
-        state.sidebar = (request[0]) ? request[0] : 'home';
-        state.view    = (request[1]) ? request[1] : false;
+        state.sidebar = request[0] || 'home';
+        state.view    = request[1] || false;
 
         // Validate request.
         if(!_.has(config.sidebars, state.sidebar)) {
