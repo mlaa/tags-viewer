@@ -24,6 +24,12 @@
 
       var myHashTag = '';
 
+      // The version of TAGS you are using, e.g., '3.1'. Specifying this helps 
+      // speed up page load because we don't need to fetch column labels before the 
+      // first request. If you don't know it, just leave it blank.
+
+      var TAGSVersion = '';
+
       // That's about it!
 
     </script>
@@ -301,6 +307,13 @@
 
         },
       
+        // All column labels for known TAGS versions
+        columns: {
+          '2.4.4': {A:'from_user', B:'text', C:'created_at', D:'time', E:'geo_coordinates', F:'iso_language_code', G:'to_user_id_str', H:'from_user_id_str', I:'id_str', J:'source', K:'profile_image_url', L:'status_url', M:'entities_str'},
+          '3.1': {A:'id_str', B:'from_user', C:'text', D:'created_at', E:'time', F:'geo_coordinates', G:'iso_language_code', H:'to_user', I:'to_user_id_str', J:'from_user_id_str', K:'source', L:'profile_image_url', M:'status_url', N:'entities_str'},
+          '3.2': {A:'id_str', B:'from_user', C:'text', D:'created_at', E:'time', F:'geo_coordinates', G:'iso_language_code', H:'to_user', I:'to_user_id_str', J:'from_user_id_str', K:'in_reply_to_status_id_str', L:'source', M:'profile_image_url', N:'status_url', O:'entities_str'}
+        },
+ 
         // Our hash tag
         myHashTag: (typeof myHashTag === 'undefined') ? '' : myHashTag.toLowerCase().replace(/^#/, ''),
 
@@ -474,6 +487,11 @@
         $.each(config.spreadsheet, function(key, val) {
           $.fn.sheetrock.options[key] = val;
         });
+
+        // Hardcode column labels, if known.
+        if(_.has(config.columns, TAGSVersion)) {
+          $.fn.sheetrock.labels = config.columns[TAGSVersion];
+        }
 
         // Start hashchange router.
         $(window).hashchange(hashRouter).trigger('hashchange');
