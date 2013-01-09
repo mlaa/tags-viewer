@@ -24,7 +24,7 @@
 
       var myHashTag = '';
 
-      // The version of TAGS you are using, e.g., '3.1'. Specifying this helps 
+      // The version of TAGS you are using, e.g., '3.2'. Specifying this helps 
       // speed up page load because we don't need to fetch column labels before the 
       // first request. If you don't know it, just leave it blank.
 
@@ -425,9 +425,9 @@
 
       $(document).ready(function() {
 
-        // If a spreadsheet URL has been supplied, throw the 
-        // lever! Otherwise, allow a user to specify one.
-        if(spreadsheetURL) {
+        // If a spreadsheet URL or key has been supplied, throw 
+        // the lever! Otherwise, allow a user to specify one.
+        if(parseSheet(spreadsheetURL) || parseSheet(window.location.search.substring(1))) {
           setup();
         } else {
           cache.elements.config.show();
@@ -443,9 +443,6 @@
 
 
       function setup() {
-
-        // Add Google Spreadsheet URL.
-        config.spreadsheet.url = spreadsheetURL;
 
         // Configure Sheetrock.
         $.each(config.spreadsheet, function(key, val) {
@@ -563,18 +560,11 @@
 
       function addSheet(e) {
 
-        var key = trim(cache.elements.key.val());
+        var key = parseSheet(cache.elements.key.val());
 
         if(key) {
-
-          // Attempt to grab correct work sheet.
-          if(!/#gid=[0-9]+$/.test(key)) key += '#gid=82';
-
-          cache.elements.config.hide();
-          spreadsheetURL = key;
-          setup();
+          window.location.href = window.location.href + '?' + key;
           e.preventDefault();
-
         }
 
       }
@@ -901,6 +891,24 @@
 
       function trim(str) {
         return str.toString().replace(/^ +/, '').replace(/ +$/, '');
+      }
+
+
+      // Parse Google Spreadsheet URL.
+
+      function parseSheet(str) {
+
+        var url = trim(str).match(/key=([^\&\#]+)(#gid=([0-9]+))?/) || [];
+        var key = trim(str).match(/[A-z0-9\-\=]+/) || [];
+            key = url[1] || key[0];
+
+        if(key) {
+          var slug = 'https://docs.google.com/spreadsheet/ccc?key=';
+          config.spreadsheet.url = slug + key + '#gid=' + (url[3] || '82');
+        }
+
+        return key;
+
       }
 
 
