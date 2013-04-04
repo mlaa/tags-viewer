@@ -454,7 +454,7 @@
 
         // Hardcode column labels, if known.
         if(_.has(config.columns, TAGSVersion)) {
-          $.fn.sheetrock.labels = config.columns[TAGSVersion];
+          $.fn.sheetrock.options.columns = config.columns[TAGSVersion];
         }
 
         // Start hashchange router.
