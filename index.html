@@ -525,8 +525,8 @@
 
           // Clear previously loaded content.
           cache.elements.main.children(config.templateChildren).remove();
-          $.data(cache.elements.main[0], 'sheetrock-loaded',     0);
-          $.data(cache.elements.main[0], 'sheetrock-row-offset', 0);
+          $.data(cache.elements.main[0], 'sheetrockLoaded',     0);
+          $.data(cache.elements.main[0], 'sheetrockRowOffset', 0);
 
           // Load content and start infinite scroll listener, if needed.
           if(_.has(config.views[state.sidebar], 'sql')) {
