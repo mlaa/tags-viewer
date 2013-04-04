@@ -3,7 +3,11 @@
 This application is contained in a single HTML file and has no server dependencies, which makes it easy to host anywhere: just upload a single file (this one!) and you’re done. Or, if you don’t need to share it with anyone, just double-click the file on your hard drive to open it in your Web browser. Configuration is as simple as supplying a Google Spreadsheet URL.
 
 ### Demo
-[**Try the demo**][3] (bring your own TAGS URL) or take a look at [an ongoing archive of #mla13][4].
+[**Try the demo**][3] (bring your own TAGS URL) or take a look at [an ongoing archive of #mla13][4]. **New:** You can now specify the key of your own TAGS spreadsheet in a querystring, like so:
+
+**http://mlaa.github.com/tags-viewer/?0AueHfws2ZtlKdGlxSlp6UExKa2hid1VwVW9RWmx6eGc**
+
+This means you can use the demo to display your own archive, no set up necessary!
 
 ### About
 TAGS Viewer is a JavaScript application using [jQuery][5], [Underscore.js][6], [Moment.js][7], [jQuery Hashchange][7], [Bootstrap][9], and [Sheetrock][10].

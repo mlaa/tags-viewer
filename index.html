@@ -266,7 +266,10 @@
           chunkSize : 20,
 
           // Default number of header rows
-          headers : 1
+          headers : 1,
+
+          // Suppress headers
+          headersOff : true
 
         },
       
@@ -327,7 +330,7 @@
 
         // Define a jQuery selector for the top-level content children 
         // so we can remove them when loading a new view.
-        templateChildren : 'div, blockquote',
+        templateChildren : 'div, blockquote, iframe',
 
         // Certain domains are whitelisted as media object providers.
         mediaDomains : ['youtube.com','youtu.be','vimeo.com','twitpic.com','yfrog.com','docs.google.com'],
