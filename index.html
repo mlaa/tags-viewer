@@ -390,6 +390,9 @@
           loading_s : $('#sidebar-loading')
         },
 
+        // Placeholder for manual caches.
+        requests: {},
+
         // Create a placeholder for an entities cache.
         entities: {links: {}, media: {}, tags: {}, mentions: {}},
 
@@ -612,8 +615,11 @@
         // Pass along loading indicator.
         query.loading = cache.elements.loading_s;
 
+        // Used cached data if it exists.
+        var data = (_.has(cache, 'requests')) ? cache.requests[state.sidebar] : null;
+
         // Fetch data.
-        cache.elements[state.sidebar].sheetrock(query);
+        cache.elements[state.sidebar].sheetrock(query, data);
 
       }
 
@@ -656,8 +662,11 @@
         // Pass along loading indicator.
         query.loading = cache.elements.loading_s;
 
+        // Used cached data if it exists.
+        var data = (_.has(cache, 'requests')) ? cache.requests[state.sidebar] : null;
+
         // Fetch data.
-        $.fn.sheetrock(query);
+        $.fn.sheetrock(query, data);
 
       }
 
