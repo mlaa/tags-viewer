@@ -12,20 +12,20 @@
 
       /* Configuration */
 
-      // Google spreadsheet URL. If this value is false or empty, the page will 
-      // ask the user to supply one. Remember that the spreadsheet must be made 
+      // Google spreadsheet URL. If this value is false or empty, the page will
+      // ask the user to supply one. Remember that the spreadsheet must be made
       // public or "visible to anyone with the link."
 
-      var spreadsheetURL = '';
+      var spreadsheetURL = 'https://docs.google.com/spreadsheet/ccc?key=0AhTw-VO8oh-MdEpPUXlZdlZqNlZySHpFUUJwdjZvU3c&usp=sharing';
 
-      // The hashtag that the spreadsheet is archiving, e.g, '#conference'. This is 
-      // not strictly necessary but is useful for display purposes and to exclude 
+      // The hashtag that the spreadsheet is archiving, e.g, '#conference'. This is
+      // not strictly necessary but is useful for display purposes and to exclude
       // it from the Tags ranking.
 
       var myHashTag = '';
 
-      // The version of TAGS you are using, e.g., '3.2'. Specifying this helps 
-      // speed up page load because we don't need to fetch column labels before the 
+      // The version of TAGS you are using, e.g., '3.2'. Specifying this helps
+      // speed up page load because we don't need to fetch column labels before the
       // first request. If you don't know it, just leave it blank.
 
       var TAGSVersion = '';
@@ -272,14 +272,15 @@
           headersOff : true
 
         },
-      
+
         // All column labels for known TAGS versions
         columns: {
           '2.4.4': {A:'from_user', B:'text', C:'created_at', D:'time', E:'geo_coordinates', F:'iso_language_code', G:'to_user_id_str', H:'from_user_id_str', I:'id_str', J:'source', K:'profile_image_url', L:'status_url', M:'entities_str'},
           '3.1': {A:'id_str', B:'from_user', C:'text', D:'created_at', E:'time', F:'geo_coordinates', G:'iso_language_code', H:'to_user', I:'to_user_id_str', J:'from_user_id_str', K:'source', L:'profile_image_url', M:'status_url', N:'entities_str'},
-          '3.2': {A:'id_str', B:'from_user', C:'text', D:'created_at', E:'time', F:'geo_coordinates', G:'iso_language_code', H:'to_user', I:'to_user_id_str', J:'from_user_id_str', K:'in_reply_to_status_id_str', L:'source', M:'profile_image_url', N:'status_url', O:'entities_str'}
+          '3.2': {A:'id_str', B:'from_user', C:'text', D:'created_at', E:'time', F:'geo_coordinates', G:'iso_language_code', H:'to_user', I:'to_user_id_str', J:'from_user_id_str', K:'in_reply_to_status_id_str', L:'source', M:'profile_image_url', N:'status_url', O:'entities_str'},
+          '5.0': {A:'id_str', B:'from_user', C:'text', D:'created_at', E:'time', F:'geo_coordinates', G:'user_lang', H:'in_reply_to_user_id_str', I:'in_reply_to_screen_name', J:'from_user_id_str', K:'in_reply_to_status_id_str', L:'source', M:'profile_image_url', N:'user_followers_count', O:'user_friends_count', P:'user_utc_offset', Q:'status_url', R:'entities_str'}
         },
- 
+
         // Our hash tag
         myHashTag: (typeof myHashTag === 'undefined') ? '' : myHashTag.toLowerCase().replace(/^#/, ''),
 
@@ -289,7 +290,7 @@
         // Use Twitter embed -- see comments in "Twitter embed", below.
         twitterEmbed : true,
 
-        // Define spreadsheet views for valid (non-error) requests. The 
+        // Define spreadsheet views for valid (non-error) requests. The
         // query language is SQL-like. Google provides ocumentation here:
         // https://developers.google.com/chart/interactive/docs/querylanguage
 
@@ -328,7 +329,7 @@
           search   : 'Search results for <span class="label label-info">%%%</label>'
         },
 
-        // Define a jQuery selector for the top-level content children 
+        // Define a jQuery selector for the top-level content children
         // so we can remove them when loading a new view.
         templateChildren : 'div, blockquote, iframe',
 
@@ -415,10 +416,10 @@
 
       /* Twitter embed */
 
-      // Twitter asks that you use their embed solution when 
-      // displaying tweets on your site. While it makes them 
-      // nice to look at and does nice things like pulling in 
-      // whole conversations, it can slow down a page. Also 
+      // Twitter asks that you use their embed solution when
+      // displaying tweets on your site. While it makes them
+      // nice to look at and does nice things like pulling in
+      // whole conversations, it can slow down a page. Also
       // note that it doesn't seem to work on localhost.
 
 
@@ -431,7 +432,7 @@
 
       $(document).ready(function() {
 
-        // If a spreadsheet URL or key has been supplied, throw 
+        // If a spreadsheet URL or key has been supplied, throw
         // the lever! Otherwise, allow a user to specify one.
         if(parseSheet(spreadsheetURL) || parseSheet(window.location.search.substring(1))) {
           setup();
@@ -485,7 +486,7 @@
         var hash = window.location.hash.replace(/^[#\/]*/, '');
         var request = hash.split('/', 2);
 
-        // Populate state information.        
+        // Populate state information.
         state.sidebar = request[0] || 'home';
         state.view    = request[1] || false;
 
@@ -856,7 +857,7 @@
         // Don't load more data if we are already actively getting some.
         if(!$.fn.sheetrock.working) {
 
-          // Trigger callback when user scrolls past this number of pixels 
+          // Trigger callback when user scrolls past this number of pixels
           // from the bottom of the page.
           var pixelBuffer = 100;
 
