@@ -730,7 +730,7 @@
         // Extract entities and populate cache.
         _.each(data.table.rows, function(obj, i) {
           if(_.has(obj, 'c')) {
-            var entities = (_.has(obj.c[0], 'v')) ? $.parseJSON(obj.c[0].v) : {};
+            var entities = (_.has(obj.c[0], 'v') && obj.c[0].v) ? $.parseJSON(obj.c[0].v) : {};
             if(entities) cacheEntities(entities);
           }
         });
