@@ -242,10 +242,10 @@
 
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.3/underscore-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-hashchange/v1.3/jquery.ba-hashchange.min.js"></script>
-    <script src="http://mlaa.github.com/tags-viewer/jquery.sheetrock.min.js"></script>
+    <script src="http://mlaa.github.io/tags-viewer/jquery.sheetrock.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/1.7.2/moment.min.js"></script>
     <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/js/bootstrap.min.js"></script>
     <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/js/bootstrap.min.js"></script>
@@ -730,7 +730,7 @@
         // Extract entities and populate cache.
         _.each(data.table.rows, function(obj, i) {
           if(_.has(obj, 'c')) {
-            var entities = (_.has(obj.c[0], 'v')) ? $.parseJSON(obj.c[0].v) : {};
+            var entities = (_.has(obj.c[0], 'v') && obj.c[0].v) ? $.parseJSON(obj.c[0].v) : {};
             if(entities) cacheEntities(entities);
           }
         });
